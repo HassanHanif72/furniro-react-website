@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from "./pages/Home";
 import Header from "./components/Header";
 import About from "./pages/About";
 import Shop from "./pages/Shop";
@@ -14,6 +13,7 @@ import CheckoutPage from "./pages/Checkout";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminPanel from "./pages/AdminPanel";
 import ToShip from "./pages/ToShip";
+import Home from "./pages/Home";
 
 function AppRouter() {
   return (
