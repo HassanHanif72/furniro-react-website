@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Hide the chart on small screens (phones and tablets) */
+@media (max-width: 768px) {
+    .chart {
+      display: none;
+    }
+  }
