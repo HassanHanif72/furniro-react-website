@@ -1,9 +1,9 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import About from "./pages/About";
 import Shop from "./pages/Shop";
 import Contact from "./pages/Contact";
-import ProductComparison from "./pages/ProductComparison"; // Fixed casing
+import ProductComparison from "./pages/ProductComparison";
 import LoginForm from "./pages/Login";
 import SignUp from "./pages/Signup";
 import ProductDetails from "./components/ProductDetail";
@@ -19,23 +19,33 @@ function AppRouter() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<LoginForm />} /> {/* Changed to lowercase */}
-        <Route path="/signup" element={<SignUp />} /> {/* Changed to lowercase */}
-        <Route path="/about" element={<About />} /> {/* Changed to lowercase */}
-        <Route path="/shop" element={<Shop />} /> {/* Changed to lowercase */}
-        <Route path="/contact" element={<Contact />} /> {/* Changed to lowercase */}
-        <Route path="/cart" element={<Cart />} /> {/* Changed to lowercase */}
-        <Route path="/wishlist" element={<Wishlist />} /> {/* Changed to lowercase */}
-        <Route path="/product/:id" element={<ProductDetails />} />
-        <Route path="/adminpanel" element={<AdminPanel />} /> {/* Changed to lowercase */}
-        <Route path="/toshop" element={<ToShip />} /> {/* Changed to lowercase */}
-        <Route path="/productcomparison" element={<ProductComparison />} /> {/* Fixed casing */}
-        <Route path="/checkout" element={<CheckoutPage />} /> {/* Changed to lowercase */}
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/login" element={<Layout hideHeader><LoginForm /></Layout>} />
+        <Route path="/signup" element={<Layout hideHeader><SignUp /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/shop" element={<Layout><Shop /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/cart" element={<Layout><Cart /></Layout>} />
+        <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
+        <Route path="/product/:id" element={<Layout><ProductDetails /></Layout>} />
+        <Route path="/adminpanel" element={<Layout hideHeader><AdminPanel /></Layout>} />
+        <Route path="/toshop" element={<Layout><ToShip /></Layout>} />
+        <Route path="/productcomparison" element={<Layout><ProductComparison /></Layout>} />
+        <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
       </Routes>
     </BrowserRouter>
+  );
+}
+
+function Layout({ children, hideHeader }) {
+  const location = useLocation();
+
+  return (
+    <div>
+      {!hideHeader && location.pathname !== "/adminpanel" && <Header />}
+      {children}
+    </div>
   );
 }
 

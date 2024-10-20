@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../utils/utils"; // Firebase initialization
-import { collection, getDocs, updateDoc, doc, onSnapshot } from "firebase/firestore";
+import { collection, updateDoc, doc, onSnapshot } from "firebase/firestore";
+import { Spin } from "antd";
+import { auth } from "../utils/utils"; // Firebase authentication
+import { signOut } from "firebase/auth";
 
 function AdminPanel() {
   const [orders, setOrders] = useState([]);
@@ -36,19 +39,43 @@ function AdminPanel() {
     }
   };
 
+  // Function to handle logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("Logged out successfully");
+      // Redirect to login page or homepage
+      window.location.href = "/login"; // Replace with your login page URL
+    } catch (error) {
+      console.error("Error logging out: ", error);
+    }
+  };
+
   if (loading) {
-    return <p>Loading orders...</p>;
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   return (
-    <div className="p-5 bg-gray-100">
-      <h2 className="text-2xl font-bold mb-4">Admin Order Management</h2>
+    <div className="p-5 bg-gray-100 border rounded-lg">
+      <h2 className="text-2xl font-bold mb-4 text-center bg-[#b88e2f] text-white py-2 rounded">
+        Admin Order Management
+      </h2>
+      <button
+        className="bg-[#b88e2f] text-white py-2 px-4 rounded mb-4"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
-        <table className="min-w-full bg-white">
+        <table className="min-w-full bg-white shadow-md rounded">
           <thead>
-            <tr>
+            <tr className="bg-[#b88e2f] text-white">
               <th className="py-2 px-4 border-b">Order ID</th>
               <th className="py-2 px-4 border-b">Customer Name</th>
               <th className="py-2 px-4 border-b">Items</th>
@@ -59,7 +86,7 @@ function AdminPanel() {
           </thead>
           <tbody>
             {orders.map((order) => (
-              <tr key={order.id}>
+              <tr key={order.id} className="hover:bg-gray-100">
                 <td className="py-2 px-4 border-b">{order.id}</td>
                 <td className="py-2 px-4 border-b">{order.userDetails.name}</td>
                 <td className="py-2 px-4 border-b">
@@ -79,14 +106,14 @@ function AdminPanel() {
                   <select
                     value={order.status}
                     onChange={(e) => updateOrderStatus(order.id, e.target.value)}
-                    className="border p-2 rounded"
+                    className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-[#b88e2f] focus:border-transparent"
                   >
                     <option value="In Progress">In Progress</option>
                     <option value="On Way">On Way</option>
                     <option value="Delivered">Delivered</option>
                   </select>
                 </td>
-              </tr>
+              </tr >
             ))}
           </tbody>
         </table>
