@@ -1,9 +1,9 @@
 import BackgroundImage from "../components/MainBackground";
-import Cards from "../components/cards";
 import Hero from "../components/Hero";
 import Gallery from "../components/Gallery";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
+import Cards from "../components/Cards";
 
 function Home() {
   return (
