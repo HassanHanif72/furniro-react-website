@@ -1,8 +1,8 @@
 import Benefits from "../components/Benefit";
-import Filter from "../components/filter";
 import Footer from "../components/Footer";
 import backgroundImage from "../assets/pics/Rectangle 1.jpg";
 import Productvip from "../components/Products";
+import Filter from "../components/Filter";
 
 function Shop() {
  
