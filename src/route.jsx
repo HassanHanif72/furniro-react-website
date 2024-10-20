@@ -14,7 +14,6 @@ import CheckoutPage from "./pages/Checkout";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminPanel from "./pages/AdminPanel";
 import ToShip from "./pages/ToShip";
-import NotFound from "./pages/NotFound"; // Optional: Import a 404 page
 
 function AppRouter() {
   return (
@@ -35,7 +34,6 @@ function AppRouter() {
         <Route path="/toshop" element={<ToShip />} /> {/* Changed to lowercase */}
         <Route path="/productcomparison" element={<ProductComparison />} /> {/* Fixed casing */}
         <Route path="/checkout" element={<CheckoutPage />} /> {/* Changed to lowercase */}
-        <Route path="*" element={<NotFound />} /> {/* Catch-all route for 404 */}
       </Routes>
     </BrowserRouter>
   );
