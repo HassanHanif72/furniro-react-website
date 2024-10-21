@@ -30,7 +30,7 @@ function AppRouter() {
         <Route path="/wishlist" element={<Layout><Wishlist /></Layout>} />
         <Route path="/product/:id" element={<Layout><ProductDetails /></Layout>} />
         <Route path="/adminpanel" element={<Layout hideHeader><AdminPanel /></Layout>} />
-        <Route path="/toshop" element={<Layout><ToShip /></Layout>} />
+        <Route path="/toship" element={<Layout><ToShip /></Layout>} />
         <Route path="/productcomparison" element={<Layout><ProductComparison /></Layout>} />
         <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
       </Routes>
