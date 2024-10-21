@@ -1,10 +1,9 @@
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+  import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { CSSTransition, SwitchTransition } from "react-transition-group"; // Import for transitions
 import Header from "./components/Header";
 import About from "./pages/About";
 import Shop from "./pages/Shop";
 import Contact from "./pages/Contact";
-import ProductComparison from "./pages/ProductComparison";
 import LoginForm from "./pages/Login";
 import SignUp from "./pages/Signup";
 import ProductDetails from "./components/ProductDetail";
@@ -35,7 +34,6 @@ function AppRouter() {
         <Route path="/product/:id" element={<Layout><ProductDetails /></Layout>} />
         <Route path="/adminpanel" element={<Layout hideHeader><AdminPanel /></Layout>} />
         <Route path="/toship" element={<Layout><ToShip /></Layout>} />
-        <Route path="/productcomparison" element={<Layout><ProductComparison /></Layout>} />
         <Route path="/checkout" element={<Layout><CheckoutPage /></Layout>} />
       </Routes>
     </BrowserRouter>

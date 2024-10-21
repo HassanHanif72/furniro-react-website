@@ -1,13 +1,61 @@
+import React, { useState, useEffect } from 'react';
 import { Spin } from "antd";
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-// Productvip component
+// Filter Component
+function Filter({ showCount, setShowCount, sortOption, setSortOption }) {
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between bg-[#f9f3eb] p-4 space-y-4 sm:space-y-0">
+      {/* Left Section (Filter + View Options + Results Count) */}
+      <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto justify-between">
+        <button className="flex items-center text-black">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707l-7.414 7.414a1 1 0 00-.293.707v3.172a1 1 0 01-1.707.707l-2.828-2.828a1 1 0 01-.293-.707V12.12a1 1 0 00-.293-.707L3.293 6.707A1 1 0 013 6V4z" />
+          </svg>
+          <span className="ml-1">Filter</span>
+        </button>
+
+        <span className="text-gray-600">Showing 1-{showCount} results</span>
+      </div>
+
+      {/* Right Section (Show Count + Sort Option) */}
+      <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-1">
+          <span className="text-gray-600">Show</span>
+          <input
+            type="number"
+            className="w-12 p-1 text-center border"
+            value={showCount}
+            onChange={(e) => setShowCount(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center space-x-1">
+          <span className="text-gray-600">Sort by</span>
+          <select
+            className="p-1 border"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="Default">Default</option>
+            <option value="Price: Low to High">Price: Low to High</option>
+            <option value="Price: High to Low">Price: High to Low</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Productvip Component
 function Productvip() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8; // Adjust this to show more or fewer products per page
+  const [showCount, setShowCount] = useState(8); // Show count is managed here
+  const [sortOption, setSortOption] = useState('Default'); // Sort option
+
+  const productsPerPage = showCount; // Show more products per page based on user input
 
   // Fetch data from the dummy JSON API
   useEffect(() => {
@@ -26,6 +74,13 @@ function Productvip() {
     fetchProducts();
   }, []);
 
+  // Sort products based on sortOption
+  const sortedProducts = [...products].sort((a, b) => {
+    if (sortOption === 'Price: Low to High') return a.price - b.price;
+    if (sortOption === 'Price: High to Low') return b.price - a.price;
+    return products;
+  });
+
   // Show loading indicator while fetching
   if (loading) {
     return (
@@ -43,10 +98,10 @@ function Productvip() {
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   const handleNextPage = () => {
-    if (indexOfLastProduct < products.length) {
+    if (indexOfLastProduct < sortedProducts.length) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -58,10 +113,13 @@ function Productvip() {
   };
 
   return (
+    <>
+    <Filter showCount={showCount} setShowCount={setShowCount} sortOption={sortOption} setSortOption={setSortOption} />
     <div className="container mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">
-        Featured Products
-      </h1>
+      {/* Include the Filter Component */}
+      
+
+      <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">Featured Products</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {currentProducts.map((product, index) => (
           <Link
@@ -97,7 +155,7 @@ function Productvip() {
         <button
           onClick={handlePrevPage}
           disabled={currentPage === 1}
-          style={{backgroundColor : "#b88e2f"}}
+          style={{ backgroundColor: "#b88e2f" }}
           className="mr-4 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded"
         >
           Previous
@@ -105,13 +163,14 @@ function Productvip() {
         <button
           onClick={handleNextPage}
           disabled={indexOfLastProduct >= products.length}
-          className=" hover:bg-gray-400 text-white font-bold py-2 px-4 rounded"
-          style={{backgroundColor : "#b88e2f"}}
+          className="hover:bg-gray-400 text-white font-bold py-2 px-4 rounded"
+          style={{ backgroundColor: "#b88e2f" }}
         >
           Next
         </button>
       </div>
     </div>
+    </>
   );
 }
 
