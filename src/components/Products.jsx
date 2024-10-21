@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 function Productvip() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8; // Adjust this to show more or fewer products per page
 
   // Fetch data from the dummy JSON API
   useEffect(() => {
@@ -38,13 +40,30 @@ function Productvip() {
     return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   };
 
+  // Pagination logic
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const handleNextPage = () => {
+    if (indexOfLastProduct < products.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-4xl font-bold text-center mb-12 text-gray-800">
         Featured Products
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {products.map((product, index) => (
+        {currentProducts.map((product, index) => (
           <Link
             to={`/product/${product.id}`}
             key={index}
@@ -71,6 +90,26 @@ function Productvip() {
             )}
           </Link>
         ))}
+      </div>
+
+      {/* Pagination controls */}
+      <div className="flex justify-center items-center mt-8">
+        <button
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+          style={{backgroundColor : "#b88e2f"}}
+          className="mr-4 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded"
+        >
+          Previous
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={indexOfLastProduct >= products.length}
+          className=" hover:bg-gray-400 text-white font-bold py-2 px-4 rounded"
+          style={{backgroundColor : "#b88e2f"}}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

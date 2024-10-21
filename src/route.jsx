@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { CSSTransition, SwitchTransition } from "react-transition-group"; // Import for transitions
 import Header from "./components/Header";
 import About from "./pages/About";
 import Shop from "./pages/Shop";
@@ -14,12 +15,15 @@ import ScrollToTop from "./components/ScrollToTop";
 import AdminPanel from "./pages/AdminPanel";
 import ToShip from "./pages/ToShip";
 import Home from "./pages/Home";
+import "./index.css"; // Import your custom CSS for transitions
 
 function AppRouter() {
+
+
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Routes>
+      <Routes location={location}>
         <Route path="/" element={<Layout><Home /></Layout>} />
         <Route path="/login" element={<Layout hideHeader><LoginForm /></Layout>} />
         <Route path="/signup" element={<Layout hideHeader><SignUp /></Layout>} />
@@ -44,7 +48,15 @@ function Layout({ children, hideHeader }) {
   return (
     <div>
       {!hideHeader && location.pathname !== "/adminpanel" && <Header />}
-      {children}
+      <SwitchTransition>
+        <CSSTransition
+          key={location.pathname}
+          classNames="fade"
+          timeout={300} // Duration of the animation
+        >
+          <div>{children}</div>
+        </CSSTransition>
+      </SwitchTransition>
     </div>
   );
 }

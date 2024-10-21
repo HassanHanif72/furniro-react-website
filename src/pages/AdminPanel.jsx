@@ -90,12 +90,14 @@ function AdminPanel() {
                 <td className="py-2 px-4 border-b">{order.id}</td>
                 <td className="py-2 px-4 border-b">{order.userDetails.name}</td>
                 <td className="py-2 px-4 border-b">
-                  {Array.isArray(order.cartItems) ? (
-                    order.cartItems.map((item, index) => (
-                      <p key={index}>
-                        {item.title} - {item.quantity}
-                      </p>
-                    ))
+                  {Array.isArray(order.cartItems) && order.cartItems.length > 0 ? (
+                    <ul>
+                      {order.cartItems.map((item, index) => (
+                        <li key={index}>
+                          {item.title} - {item.quantity} {item.quantity > 1 ? "pcs" : "pc"}
+                        </li>
+                      ))}
+                    </ul>
                   ) : (
                     <p>No items available</p>
                   )}
@@ -113,7 +115,7 @@ function AdminPanel() {
                     <option value="Delivered">Delivered</option>
                   </select>
                 </td>
-              </tr >
+              </tr>
             ))}
           </tbody>
         </table>
