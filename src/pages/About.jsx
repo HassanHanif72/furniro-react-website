@@ -42,7 +42,7 @@ const About = () => {
             <div className="bg-white p-8 rounded-lg shadow-md text-center">
               <img className="mx-auto h-32 w-32 rounded-full object-cover" src={dp1} alt="Team Member 1" />
               <h3 className="mt-6 text-lg font-medium text-gray-900">Abdul Moiz</h3>
-              <p className="mt-2 text-base text-gray-500">CEO & Founder</p>
+              <p className="mt-2 text-base text-gray-500">CEO,Founder & Developer</p>
               <p className="mt-4 text-sm text-gray-400">
                 Passionate leader with over 10 years of experience in tech innovation.
               </p>
