@@ -84,7 +84,9 @@ function ToShip() {
                         <img
                           src={item.image}
                           alt={`Order ${order.id}`}
-                          className="w-full sm:w-1/3 h-20 object-cover object-center" 
+                          className="w-full sm:w-1/3 h-20 object-cover object-center border rounded-xl" 
+                          style={{width : "2cm", height :  "2cm"}} 
+
                         />
                         <div className="p-4 w-full sm:w-2/3">
                           <h3 className="text-lg font-semibold">
