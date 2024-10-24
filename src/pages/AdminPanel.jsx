@@ -6,6 +6,7 @@ import { auth } from "../utils/utils"; // Firebase authentication
 import { signOut } from "firebase/auth";
 import { Line } from "react-chartjs-2"; // Importing Chart component
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Navigate, useNavigate } from "react-router";
 
 // Register chart components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -17,6 +18,8 @@ function AdminPanel() {
   const [salesLabels, setSalesLabels] = useState([]); // State for sales labels (dates)
   const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState("dashboard"); // State for page navigation
+  const  navigate = useNavigate();
+
 
   // Fetch orders when activePage is "orders" or dashboard is active for analytics
   useEffect(() => {
@@ -83,7 +86,7 @@ function AdminPanel() {
     try {
       await signOut(auth);
       console.log("Logged out successfully");
-      window.location.href = "/login"; // Replace with your login page URL
+      navigate("/Login")
     } catch (error) {
       console.error("Error logging out: ", error);
     }
