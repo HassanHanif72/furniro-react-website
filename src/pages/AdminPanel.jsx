@@ -4,35 +4,53 @@ import { collection, updateDoc, doc, onSnapshot } from "firebase/firestore";
 import { Spin } from "antd";
 import { auth } from "../utils/utils"; // Firebase authentication
 import { signOut } from "firebase/auth";
+import { Line } from "react-chartjs-2"; // Importing Chart component
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register chart components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 function AdminPanel() {
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]); // State for users
+  const [salesData, setSalesData] = useState([]); // State for sales data
+  const [salesLabels, setSalesLabels] = useState([]); // State for sales labels (dates)
   const [loading, setLoading] = useState(true);
   const [activePage, setActivePage] = useState("dashboard"); // State for page navigation
 
-  // Fetch orders when activePage is "orders"
+  // Fetch orders when activePage is "orders" or dashboard is active for analytics
   useEffect(() => {
-    if (activePage === "orders") {
-      const ordersRef = collection(db, "orders");
+    const ordersRef = collection(db, "orders");
 
-      const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
-        const ordersList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setOrders(ordersList);
-        setLoading(false);
+    const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
+      const ordersList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setOrders(ordersList);
+
+      // Prepare sales data for the chart (total sales over time)
+      const sales = [];
+      const labels = [];
+
+      ordersList.forEach(order => {
+        sales.push(order.totalPrice);
+        labels.push(new Date(order.date).toLocaleDateString()); // Assuming "date" field in orders
       });
 
-      return () => unsubscribe();
-    }
+      setSalesData(sales);
+      setSalesLabels(labels);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, [activePage]);
 
   // Fetch users when activePage is "users"
   useEffect(() => {
     if (activePage === "users") {
-      const usersRef = collection(db, "users"); // Adjust the collection name based on your Firestore structure
+      const usersRef = collection(db, "users");
 
       const unsubscribe = onSnapshot(usersRef, (snapshot) => {
         const usersList = snapshot.docs.map((doc) => ({
@@ -71,7 +89,20 @@ function AdminPanel() {
     }
   };
 
-  if (loading && (activePage === "orders" || activePage === "users")) {
+  // Data for the sales chart
+  const salesChartData = {
+    labels: salesLabels,
+    datasets: [
+      {
+        label: "Total Sales ($)",
+        data: salesData,
+        borderColor: "#b88e2f",
+        fill: false,
+      },
+    ],
+  };
+
+  if (loading && (activePage === "orders" || activePage === "users" || activePage === "dashboard")) {
     return (
       <div className="min-h-screen flex justify-center items-center">
         <Spin size="large" />
@@ -83,9 +114,18 @@ function AdminPanel() {
     switch (activePage) {
       case "dashboard":
         return (
-          <h2 className="text-xl font-semibold text-center mb-6">
-            Welcome to the Dashboard
-          </h2>
+          <div>
+            <h2 className="text-xl font-semibold text-center mb-6">
+              Sales Analytics
+            </h2>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              {loading ? (
+                <Spin />
+              ) : (
+                <Line data={salesChartData} />
+              )}
+            </div>
+          </div>
         );
       case "orders":
         return (
