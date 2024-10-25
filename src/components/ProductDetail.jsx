@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { db } from "../utils/utils.js";
 import { collection, addDoc, query, where, getDocs, deleteDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -8,39 +8,191 @@ import { Spin } from "antd";
 import { CartContext } from "../context/CartContext.jsx";
 import Footer from "./Footer.jsx";
 
+const sampleProducts = [
+  {
+    id: 1,
+    title: "Elegant Wooden Chair",
+    price: 120.99,
+    description: "A beautiful wooden chair with a modern design.",
+    image: "https://woodsala.com/cdn/shop/files/Z7A9243.jpg?v=1689680042&width=4000",
+    rating: { rate: 4.2 }
+  },
+  {
+    id: 2,
+    title: "Classic Sofa",
+    price: 350.49,
+    description: "A comfortable sofa with elegant fabric.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTA1Ch36jazJ1zm-P9u_XNqfVXSpYls3UqLw&s",
+    rating: { rate: 4.5 }
+  },
+  {
+    id: 3,
+    title: "Vintage Coffee Table",
+    price: 199.99,
+    description: "A wooden coffee table with a vintage finish.",
+    image: "https://media.istockphoto.com/id/508702767/photo/round-coffee-table.jpg?s=612x612&w=0&k=20&c=KSnqxVKG1OMmBuWw8gx4FeRlEa7-8RAN8k7kM3TmeTM=",
+    rating: { rate: 4.3 }
+  },
+  {
+    id: 4,
+    title: "Stylish Desk",
+    price: 189.99,
+    description: "A sleek, modern desk perfect for workspaces.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUpvgUz8SUGP3FlvtrhsTAPIwCqccaeW1Znw&s",
+    rating: { rate: 4.7 }
+  },
+  {
+    id: 5,
+    title: "Rustic Dining Table",
+    price: 599.49,
+    description: "A large dining table with a rustic look.",
+    image: "https://i.pinimg.com/736x/89/e3/17/89e31726976643410056b57745dec873.jpg",
+    rating: { rate: 4.8 }
+  },
+  {
+    id: 6,
+    title: "Comfy Armchair",
+    price: 225.99,
+    description: "A cozy armchair with plush seating.",
+    image: "https://img.freepik.com/premium-photo/comfortable-arm-chair-isolated-white-background_849973-121.jpg",
+    rating: { rate: 4.6 }
+  },
+  {
+    id: 7,
+    title: "Minimalist Bookshelf",
+    price: 99.99,
+    description: "A tall, minimalist bookshelf.",
+    image: "https://img.freepik.com/premium-photo/modern-bookshelf-with-open-shelves-minimalist-design-isolated-white-background_220770-59936.jpg",
+    rating: { rate: 4.4 }
+  },
+  {
+    id: 8,
+    title: "Modern TV Stand",
+    price: 149.99,
+    description: "A modern TV stand with storage space.",
+    image: "https://www.shutterstock.com/image-photo/modern-tv-table-isolated-on-260nw-2302340743.jpg",
+    rating: { rate: 4.5 }
+  },
+  {
+    id: 9,
+    title: "Outdoor Patio Set",
+    price: 499.99,
+    description: "A set of outdoor furniture for patios.",
+    image: "https://www.shutterstock.com/image-photo/set-wicker-rattan-furniture-garden-260nw-2184093107.jpg",
+    rating: { rate: 4.7 }
+  },
+  {
+    id: 10,
+    title: "Comfortable Recliner",
+    price: 299.99,
+    description: "A recliner that offers maximum comfort.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS91365ut-BEuUy6m1PZTbdG5NgNVNz9fVnKg&s",
+    rating: { rate: 4.6 }
+  },
+  {
+    id: 11,
+    title: "Office Chair",
+    price: 85.99,
+    description: "An ergonomic chair for office use.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3pEOQs4WV7SYzCt5CaalBhJWyNIUT-f0BIw&s",
+    rating: { rate: 4.4 }
+  },
+  {
+    id: 12,
+    title: "Bed Frame",
+    price: 299.99,
+    description: "A sturdy bed frame with a stylish design.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSxstWLSb_UWfmJI-krU2jhd-JY1HVc4Hdww&s",
+    rating: { rate: 4.8 }
+  },
+  {
+    id: 13,
+    title: "Kitchen Stool",
+    price: 45.99,
+    description: "A high stool for kitchen counters.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVOmzoq9_6YW5moGMWNXJdPqWy9OpolK9Acg&s",
+    rating: { rate: 4.2 }
+  },
+  {
+    id: 14,
+    title: "Wardrobe",
+    price: 449.99,
+    description: "A spacious wardrobe with multiple compartments.",
+    image: "https://img.freepik.com/premium-photo/wardrobe-isolated-white-background-3d-rendering_578102-1230.jpg?w=360",
+    rating: { rate: 4.5 }
+  },
+  {
+    id: 15,
+    title: "Glass Coffee Table",
+    price: 175.99,
+    description: "A coffee table with a glass top.",
+    image: "https://lofthome.com/cdn/shop/files/modern-tempered-glass-coffee-table-2pcs-set-sharkmodernloft-home-sg-888444.jpg?v=1724156155&width=1080",
+    rating: { rate: 4.3 }
+  },
+  {
+    id: 16,
+    title: "Garden Bench",
+    price: 149.99,
+    description: "A sturdy bench for garden seating.",
+    image: "https://st2.depositphotos.com/1323882/6164/i/950/depositphotos_61644113-stock-photo-bench-on-white-background.jpg",
+    rating: { rate: 4.5 }
+  },
+  {
+    id: 17,
+    title: "Bean Bag Chair",
+    price: 59.99,
+    description: "A comfortable bean bag chair.",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVUFpjElOy_CyQ3sTCqLyyX5xvCUlC81viyw&s",
+    rating: { rate: 4.6 }
+  },
+  {
+    id: 18,
+    title: "Nightstand",
+    price: 79.99,
+    description: "A small nightstand with drawers.",
+    image: "https://media.istockphoto.com/id/1309750064/photo/wooden-bedside-table-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=g82rD9vEDEBromq3M4HSYWtbThAowLuL77CaUlZmZEg=",
+    rating: { rate: 4.4 }
+  },
+  {
+    id: 19,
+    title: "Dining Chair Set",
+    price: 249.99,
+    description: "A set of dining chairs with a classic design.",
+    image: "https://www.shutterstock.com/image-photo/wooden-table-chairs-on-white-600nw-2168176325.jpg",
+    rating: { rate: 4.7 }
+  },
+  {
+    id: 20,
+    title: "Shoe Rack",
+    price: 59.99,
+    description: "A compact shoe rack with multiple shelves.",
+    image: "https://img.freepik.com/premium-photo/shoe-rack-isolated-white-background_41158-5511.jpg",
+    rating: { rate: 4.3 }
+  }
+];
+
+
 function ProductDetail() {
   const { id } = useParams();
-  const navigate = useNavigate(); // Create a navigate function
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isInCart, setIsInCart] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  const [detailedDescription, setDetailedDescription] = useState(""); // Add state for detailed description
+  const [detailedDescription, setDetailedDescription] = useState("");
   const auth = getAuth();
   const { addToCart: addToCartContext } = useContext(CartContext);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const response = await fetch(`https://fakestoreapi.com/products/${id}`);
-        const data = await response.json();
-        setProduct(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        setLoading(false);
+    const fetchProduct = () => {
+      const productData = sampleProducts.find((p) => p.id === parseInt(id, 10));
+      if (productData) {
+        setProduct(productData);
+        setDetailedDescription(productData.description); // Set description directly
+      } else {
+        console.error("Product not found.");
       }
-    };
-
-    const fetchDetailedDescription = async () => {
-      // Example fetch function (modify based on your data source)
-      try {
-        const response = await fetch(`https://fakestoreapi.com/products/${id}`); // Assuming you can get details from the same endpoint
-        const data = await response.json();
-        setDetailedDescription(data.description); // Use product description for this example
-      } catch (error) {
-        console.error("Error fetching detailed description:", error);
-      }
+      setLoading(false);
     };
 
     const checkIfInCart = async () => {
@@ -53,7 +205,7 @@ function ProductDetail() {
             where("productId", "==", id)
           );
           const querySnapshot = await getDocs(q);
-          setIsInCart(querySnapshot.docs.length > 0); // Set isInCart state
+          setIsInCart(querySnapshot.docs.length > 0);
         } catch (error) {
           console.error("Error checking cart:", error);
         }
@@ -78,27 +230,26 @@ function ProductDetail() {
     };
 
     fetchProduct();
-    fetchDetailedDescription(); // Fetch detailed description
-    checkIfInCart(); // Check if product is already in cart
+    checkIfInCart();
     checkIfLiked();
   }, [id, auth.currentUser]);
 
   const addToCart = async () => {
     if (product && auth.currentUser) {
-      if (!isInCart) { // Prevent adding duplicate product
+      if (!isInCart) {
         try {
           await addDoc(collection(db, "cart"), {
             userId: auth.currentUser.uid,
             email: auth.currentUser.email,
-            productId: id, // Use productId to prevent duplicates
+            productId: id,
             title: product.title,
             price: product.price,
             image: product.image,
             description: product.description,
             quantity: 1,
           });
-          addToCartContext(product); // Add product to context
-          setIsInCart(true); // Set product as carted
+          addToCartContext(product);
+          setIsInCart(true);
           alert("Product added to cart!");
         } catch (error) {
           console.error("Error adding to cart:", error);
@@ -107,9 +258,8 @@ function ProductDetail() {
         alert("Product is already in the cart.");
       }
     } else {
-      // Redirect to the login page if the user is not logged in
       alert("Please log in to add items to your cart.");
-      navigate("/Login"); // Navigate to the login page
+      navigate("/Login");
     }
   };
 
@@ -120,7 +270,6 @@ function ProductDetail() {
         const wishlistRef = collection(db, "wishlist");
 
         if (isLiked) {
-          // Unlike the product
           const q = query(wishlistRef, where("userId", "==", userId), where("productId", "==", id));
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach(async (doc) => {
@@ -129,7 +278,6 @@ function ProductDetail() {
           setIsLiked(false);
           alert("Product removed from wishlist!");
         } else {
-          // Like the product
           await addDoc(wishlistRef, {
             userId: userId,
             productId: id,
@@ -145,7 +293,7 @@ function ProductDetail() {
       }
     } else {
       alert("Please log in to like items.");
-      navigate("/Login"); // Navigate to the login page
+      navigate("/Login");
     }
   };
 
